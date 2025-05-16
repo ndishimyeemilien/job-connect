@@ -1,5 +1,4 @@
-import  { Component, ErrorInfo, ReactNode } from 'react';
-import { AlertTriangle } from 'lucide-react';
+import React, { Component, ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
@@ -21,30 +20,27 @@ class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('Error caught by ErrorBoundary:', error, errorInfo);
+    // Example: send to Sentry or LogRocket
+  }
+
+  handleRetry = () => {
+    this.setState({ hasError: false, error: undefined });
   }
 
   render(): ReactNode {
     if (this.state.hasError) {
-      // You can render any custom fallback UI
-      return this.props.fallback || (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-          <div className="text-center">
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Something went wrong</h2>
-            <div className="flex justify-center mb-4">
-              <AlertTriangle className="h-12 w-12 text-red-500" />
-            </div>
-            <p className="text-gray-600 mb-5">
-              {this.state.error?.message || 'An unexpected error occurred'}
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Reload the page
-            </button>
-          </div>
+      return (
+        <div className="p-10 text-center">
+          <h1 className="text-2xl font-bold text-red-600">Something went wrong.</h1>
+          <p>{this.state.error?.message}</p>
+          <button
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+            onClick={this.handleRetry}
+          >
+            Try Again
+          </button>
         </div>
       );
     }
